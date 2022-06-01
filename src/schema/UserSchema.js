@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const Book = require('./BookSchema')
+const Contact = require('./ContactSchema')
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -33,8 +33,8 @@ const UserSchema = new mongoose.Schema({
     }]
 })
 
-UserSchema.virtual('book', {
-    ref: 'Book',
+UserSchema.virtual('contacts', {
+    ref: 'Contact',
     localField: '_id',
     foreignField:'user'
 })
@@ -70,7 +70,7 @@ UserSchema.methods.toJSON = async () => {
     delete userObject.password
     delete userObject.tokens
 
-    return userObject //Recheck this code
+    return userObject.toString() //Recheck this code
 
 }
 
