@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.virtual('contacts', {
     ref: 'Contact',
     localField: '_id',
-    foreignField:'user'
+    foreignField:'owner'
 })
 
 UserSchema.static.getUserByCreds = async (email,password) => {
@@ -50,13 +50,14 @@ UserSchema.static.getUserByCreds = async (email,password) => {
         if (!isMatch){
             throw new Error('Invalid Password!')
         }
+        return user
     }
     catch(e){
         throw new Error('Error Logging in!')
     }
 }
 
-UserSchema.methods.getJWT = async () => {
+UserSchema.methods.generateJWT = async () => {
     const token = jwt.sign({_id:this._id.toString()},'SecretKey123')
     user.tokens = user.tokens.concat({token})
     user.save()
