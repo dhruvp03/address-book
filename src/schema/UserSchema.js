@@ -88,7 +88,7 @@ UserSchema.pre('save',async function (next){
 UserSchema.pre('remove', async function(next){
     const user = this
 
-    await Book.deleteMany({user:user._id})
+    await Contact.deleteMany({user:user._id})
     next()
 })
 
