@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
-const UserSchema = mongoose.Schema({
+const Book = require('./BookSchema')
+const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -31,6 +31,12 @@ const UserSchema = mongoose.Schema({
             required: true
         }
     }]
+})
+
+UserSchema.virtual('book', {
+    ref: 'Book',
+    localField: '_id',
+    foreignField:'user'
 })
 
 UserSchema.static.getUserByCreds = async (email,password) => {
@@ -75,6 +81,13 @@ UserSchema.pre('save',async function (next){
         user.password = bcryptjs.hash(password, 8)
     }
 
+    next()
+})
+
+UserSchema.pre('remove', async function(next){
+    const user = this
+
+    await Book.deleteMany({user:user._id})
     next()
 })
 
