@@ -5,8 +5,8 @@ const auth = async (req,res,next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
         const { _id } = jwt.verify(token,'SecretKey123') 
-        const user = await User.find({_id:_id, 'tokens.token':token})
-        if(!User){
+        const user = await User.findOne({_id:_id, 'tokens.token':token})
+        if(!user){
             throw new Error('Please register')
         }
 
@@ -15,6 +15,7 @@ const auth = async (req,res,next) => {
     }catch(e){
         res.status(400).send('Please authenticate')
     }
+    next()
 }
 
 module.exports = auth
