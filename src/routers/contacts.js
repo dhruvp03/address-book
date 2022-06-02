@@ -17,3 +17,6 @@ router.get('/allContacts/:limit/:skip',auth,contactController.allContacts) //Rou
 router.patch('/contact',auth,contactController.updateContact) //Route to update matching contact
 
 router.delete('/contact',auth, contactController.deleteContact) //Route to delete matching contact
+
+
+module.exports = router
