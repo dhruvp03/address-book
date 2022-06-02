@@ -12,6 +12,11 @@ const request_schema = joi.object({
 
 const addContact = async (req,res) => {
     try{
+        const contact_body = {
+            ...req.body,
+            owner:req.user._id
+        }
+        console.log(req.user._id)
         const contact = new Contact({
             ...req.body,
             owner:req.user._id
@@ -72,7 +77,7 @@ const allContacts = async (req,res) => {
                 limit: parseInt(req.params.limit),
                 skip: parseInt(req.params.skip)
             }
-        }).exec();
+        })
 
         if(!req.user.contacts){
             res.status(404).send('User has no contacts')
@@ -159,15 +164,15 @@ const updateContact = async (req,res) => {
                 mobile: joi.number().max(999999999999).min(1000000000)
             })
         })
-        const { validation_error, query } = update_request_schema.validate(req.body)
-        if(validation_error){
-            res.status(400).send(validation_error)
-        }
 
-        const contact = await Contact.findByIdAndUpdate({
-            ...query.contact,
+        joi.assert(req.body,update_request_schema)
+        
+        const contact = await Contact.findOneAndUpdate({
+            ...req.body.contact,
             owner:req.user._id
-        },query.updates)
+        }, req.body.updates)
+
+        console.log(contact)
 
         if(!contact){
             res.status(400).send('Contact not found')
