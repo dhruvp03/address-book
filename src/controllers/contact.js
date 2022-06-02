@@ -25,6 +25,12 @@ const addContact = async (req,res) => {
 
         res.status(200).send({contact})
     }catch(e){
+        if(e.keyValue){
+            res.status(400).send("Email address and phone number must be unique.")
+        }
+        if(e.message){
+            res.status(400).send(e.message)
+        }
         res.status(500).send(e)
     }
 }
@@ -40,6 +46,12 @@ const addContacts = async (req,res) => {
         const contacts = await Contact.insertMany(mod_contacts_body) //Since insertmany more efficient than create
         res.status(201).send(contacts)
     }catch(e) {
+        if(e.keyValue){
+            res.status(400).send("Email address and phone number must be unique.")
+        }
+        if(e.message){
+            res.status(400).send(e.message)
+        }
         res.status(500).send(e)
     }
 }
@@ -63,6 +75,9 @@ const matchingContacts = async (req,res) => {
 
         res.status(200).send(req.user.contacts)
     }catch(e){
+        if(e.details){
+            res.status(400).send(e.details[0].message)
+        }
         res.status(500).send(e)
     }
 }
@@ -90,19 +105,19 @@ const allContacts = async (req,res) => {
 
 const getOneContact = async (req,res) => {
     try{
-        const { validation_error, query } = request_schema.validate(req.body) //validating data sent in request
-        if(validation_error){
-            res.status(400).send(validation_error)
-        }
+        joi.assert(req.body, request_schema) //validating data sent in request
         
         const contact = await Contact.findOne({
-            ...query,
+            ...req.body,
             owner:req.user._id
         }).exec(); //Trying to get contact without populate to enhance efficiency
         
         res.status(200).send(contact)
     }catch(e){
-        res.status(500).send(e)
+        if(e.details){
+            res.status(400).send(e.details[0].message)
+        }
+        res.status(400).send(e)
     }
 }
 
@@ -138,6 +153,9 @@ const deleteContact = async (req,res) => {
     
         res.status(200).send(contact)
     }catch(e){
+        if(e.details){
+            res.status(400).send(e.details[0].message)
+        }
         res.status(500).send(e)
     }
 
@@ -175,6 +193,9 @@ const updateContact = async (req,res) => {
 
         res.status(200).send(`${contact} successfully updated!`)
     }catch(e){
+        if(e.details){
+            res.status(400).send(e.details[0].message)
+        }
         res.status(500).send(e)
     }
     

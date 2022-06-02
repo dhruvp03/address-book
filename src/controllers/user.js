@@ -25,9 +25,15 @@ const userAuthenticate = async (req,res) => {
         }
         const token = await get_jwt_token(user)
 
-        res.status(201).send({user,token})
+        const user_dict = {
+            username:user.username,
+            email: user.email,
+            token
+        }
+
+        res.status(201).send(user_dict)
     }catch(e){
-        res.send(e)
+        res.status(500).send(e)
     }
 
 }
