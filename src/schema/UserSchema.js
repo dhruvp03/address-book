@@ -4,7 +4,7 @@ const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Contact = require('./ContactSchema')
 const UserSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true
     },
@@ -23,12 +23,12 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         trim: true,
-        minLength: 7
+        minLength: 7,
+        required:true
     },
     tokens: [{
         token:{
             type: String,
-            required: true
         }
     }]
 })
@@ -39,7 +39,7 @@ UserSchema.virtual('contacts', {
     foreignField:'owner'
 })
 
-UserSchema.static.getUserByCreds = async (email,password) => {
+UserSchema.statics.getUserByCreds = async (email,password) => {
     try{
         const user = User.findOne({email})
 
@@ -57,29 +57,15 @@ UserSchema.static.getUserByCreds = async (email,password) => {
     }
 }
 
-UserSchema.methods.generateJWT = async () => {
-    const token = jwt.sign({_id:this._id.toString()},'SecretKey123')
-    user.tokens = user.tokens.concat({token})
-    user.save()
-    return token
-}
 
-UserSchema.methods.toJSON = async () => {
-    const user = this
-    const userObject = user.toObject()
 
-    delete userObject.password
-    delete userObject.tokens
-
-    return userObject.toString() //Recheck this code
-
-}
 
 UserSchema.pre('save',async function (next){
     const user = this
 
-    if(user.isModified(password)){
-        user.password = bcryptjs.hash(password, 8)
+    if(user.isModified('password')){
+        user.password = await bcryptjs.hash(user.password, 8)
+
     }
 
     next()
