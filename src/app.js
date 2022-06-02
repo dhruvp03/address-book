@@ -9,10 +9,6 @@ const app = express()
 
 app.use(express.json()) //parses incoming json
 
-app.get('',(req,res)=>{
-    res.send('Web server initialised!')
-})
-
 app.use(userRouter)
 app.use(contactRouter)
 
