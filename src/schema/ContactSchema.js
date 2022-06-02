@@ -11,6 +11,7 @@ const contactSchema = new mongoose.Schema({
         type:String,
         required:true,
         trim:true,
+        unique:true,
         validate(value) {
             if(!validator.isEmail(value)){
                 throw new Error('Invalid email')
@@ -24,6 +25,7 @@ const contactSchema = new mongoose.Schema({
     },
     mobile:{
         type: Number,
+        unique:true,
         minLength:10,
         maxLength:12 //In case people give with country code!
     },
