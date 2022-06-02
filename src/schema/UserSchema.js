@@ -41,7 +41,7 @@ UserSchema.virtual('contacts', {
 
 UserSchema.statics.getUserByCreds = async (email,password) => {
     try{
-        const user = User.findOne({email})
+        const user = await User.findOne({email})
 
         if(!user){
             throw new Error('No such email in db!')
