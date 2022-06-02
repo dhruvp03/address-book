@@ -1,14 +1,20 @@
 const express = require('express')
 
-require('./src/db/mongoose')
+const userRouter = require('./routers/user')
+const contactRouter = require('./routers/contacts')
+
+require('./db/mongoose')
 
 const app = express()
 
-app.use(express.json())
+app.use(express.json()) //parses incoming json
 
 app.get('',(req,res)=>{
     res.send('Web server initialised!')
 })
+
+app.use(userRouter)
+app.use(contactRouter)
 
 app.listen(3000, ()=>{
     console.log('server is up and running on port 3000')

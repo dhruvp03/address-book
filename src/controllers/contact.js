@@ -179,3 +179,13 @@ const updateContact = async (req,res) => {
     }
     
 }
+
+module.exports = {
+    addContact,
+    addContacts,
+    matchingContacts,
+    allContacts,
+    getOneContact,
+    deleteContact,
+    updateContact
+}

@@ -9,3 +9,5 @@ const router = new express.Router()
 router.post('/user',userController.userCreate) //Route to create user
 
 router.post('/user/login',userController.userAuthenticate) //Route to authenticate user
+
+module.exports = router
