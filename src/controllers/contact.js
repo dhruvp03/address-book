@@ -46,18 +46,16 @@ const addContacts = async (req,res) => {
 
 const matchingContacts = async (req,res) => {
     try {
-        const { validation_error, match} = request_schema.validate(req.body)
-        if (validation_error){
-            res.status(400).send('Please enter a valid query')
-        }
+        joi.assert(req.body,request_schema)
+        
         await req.user.populate({
             path: 'contacts',
-            match,
+            match:req.body,
             options: {
                 limit: parseInt(req.params.limit),
                 skip: parseInt(req.params.skip)
             }
-        }).exec();
+        });
 
         if(!req.user.contacts){
             return res.status(404).send()
@@ -126,14 +124,11 @@ const deleteContact = async (req,res) => {
             mobile: joi.number().max(999999999999).min(1000000000).required()
         }) // requiring mobile for the sake of getting unique entry to delete!
     
-        const { validation_error, query } = delete_request_schema.validate(req.body)
+        joi.assert(req.body,delete_request_schema)
         
-        if(validation_error){
-            res.status(400).send(validation_error)
-        }
     
         const contact = await Contact.findOneAndDelete({
-            ...query,
+            ...req.body,
             owner:req.user._id
         })
     
